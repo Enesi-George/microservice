@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+model Asset{
+  id            String    @id @default(uuid())
+  name          String
+  ide           String    @unique
+  latitude      Float
+  longitude     Float
+  // location  Unsupported("geography(Point, 4326)")
+
+  userAssets UserAsset[]
+}
+
+model UserAsset{
+  id      String @id @default(uuid())
+  userId  String 
+  assetIde String  
+  asset Asset @relation(fields:[assetIde],references: [ide])
+}
